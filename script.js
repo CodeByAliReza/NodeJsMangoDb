@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const AppError = require("./utils/AppError");
+const AppError = require("./src/utils/AppError");
 const errorMiddleware = require("./middleware/errorMiddleware");
 const dotenv = require("dotenv");
 
@@ -27,7 +27,7 @@ app.get("/", function(req, res) {
 });
 
 // Routes
-app.use(`${baseUrl}`, require('./routes'));
+app.use(`${baseUrl}`, require('./src/routes'));
 
 // 404 handler
 app.all('*', (req, res, next) => {
@@ -58,3 +58,5 @@ const port = process.env.PORT || 3002;
 app.listen(port, function() {
   console.log(`Server is running on port ${port}`);
 });
+
+module.exports = app;
