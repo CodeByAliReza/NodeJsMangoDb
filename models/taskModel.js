@@ -4,7 +4,7 @@ let taskSchema = new mongoose.Schema({
 
   name : {
     type : String,
-    required : "[true, 'name is required']",
+    required: true,
     },
 
  designation: {

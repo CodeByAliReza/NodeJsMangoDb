@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const HttpStatus = require("./utils/httpStatus");
-const taskController = require("./controllers/taskControllers");
+const AppError = require("./utils/AppError");
+const errorMiddleware = require("./middleware/errorMiddleware");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -26,31 +26,16 @@ app.get("/", function(req, res) {
   res.send("Hello World");
 });
 
-// 4. GET ALL USERS ROUTE (getUserByParams filters by query params, then falls back to getAllTask)
-app.get(`${baseUrl}/users`, [taskController.getUserByParams, taskController.getAllTask]);
-app.get(`${baseUrl}/users/:id`,taskController.getUserById );
-app.post(`${baseUrl}/PostUser`, taskController.postUser);
-app.patch(`${baseUrl}/PatchUsers/:id`, taskController.patchUser);
-app.delete(`${baseUrl}/DeleteUsers/:id`, taskController.deleteUser);
-app.put(`${baseUrl}/PutUsers/:id`, taskController.putUser);
+// Routes
+app.use(`${baseUrl}`, require('./routes'));
 
-// catch-all route for 404
-app.use((req, res, next) => {
-  const err = new Error(`Can't find ${req.originalUrl} on this Server`);
-  err.statusCode = HttpStatus.NOT_FOUND;
-  err.status = "fail";
-  next(err);
+// 404 handler
+app.all('*', (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this Server`, 404));
 });
 
-// error handler middleware
-app.use((err,req,res,next)=>{
-  err.statusCode = err.statusCode || HttpStatus.INTERNAL_SERVER_ERROR;
-  err.status = err.status || "error";
-  res.status(err.statusCode).json({
-    status : err.status,
-    message : err.message
-  })
-})
+// Global error middleware
+app.use(errorMiddleware);
 
 
 
