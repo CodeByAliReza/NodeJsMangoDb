@@ -22,7 +22,7 @@ const allTask = await query.select("-__v");
 
    }
   
-
+//
 }
 const getUserById = async function(req, res) {
 
